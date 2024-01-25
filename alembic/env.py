@@ -12,7 +12,8 @@ import os,sys
 from dotenv import load_dotenv
 
 BASE_DIR= os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-load_dotenv(os.path.join(BASE_DIR, '.env'))
+ENV_PATH=os.path.join(BASE_DIR, '.env')
+load_dotenv(ENV_PATH)
 sys.path.append(BASE_DIR)
 
 # This is the Alembic Config object, which provides
@@ -22,8 +23,8 @@ config = context.config
 #  Making a connection
 config.set_main_option('sqlalchemy.url', os.environ['DATABASE_URL'])
 
-logging.warning(f'.env full path is {os.path.join(BASE_DIR, '.env')}')
-logging.warning(f'Watch out, the url is {os.environ['DATABASE_URL']}')
+logging.warning(f".env full path is {ENV_PATH}")
+logging.warning(f"Watch out, the url is {os.environ['DATABASE_URL']}")
 
 logging.info('I told you so')  # will not print anything
 
