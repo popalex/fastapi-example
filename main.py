@@ -1,6 +1,9 @@
 import logging
+from fastapi.encoders import jsonable_encoder
+from fastapi.exceptions import RequestValidationError, ResponseValidationError
+from fastapi.responses import JSONResponse, PlainTextResponse
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi_sqlalchemy import DBSessionMiddleware, db
 from alembic.config import Config
 from alembic import command
@@ -38,6 +41,20 @@ app = FastAPI()
 app.add_middleware(DBSessionMiddleware, db_url=os.environ['DATABASE_URL'])
 
 run_all_migrations()
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=400,
+        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
+    )
+
+@app.exception_handler(ResponseValidationError)
+async def response_validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=400,
+        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
+    )
 
 @app.get("/")
 async def root():
