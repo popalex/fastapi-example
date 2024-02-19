@@ -60,7 +60,7 @@ async def book():
   
 @app.post('/author/', response_model=Author)
 async def author(author:SchemaAuthor):
-    db_author = ModelAuthor(name=author.name, age=author.age)
+    db_author = ModelAuthor(name=author.name, surname=author.surname, age=author.age)
     db.session.add(db_author)
     db.session.commit()
     return db_author
