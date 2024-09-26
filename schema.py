@@ -7,7 +7,8 @@ class AuthorCreate(BaseModel):
     age: int
 
     class Config:
-        orm_mode = True
+        # orm_mode = True
+        from_attributes = True
 
 # Schema for output after creating an author (with ID)
 class AuthorResponse(BaseModel):
@@ -17,7 +18,8 @@ class AuthorResponse(BaseModel):
     age: int
 
     class Config:
-        orm_mode = True
+        # orm_mode = True
+        from_attributes = True
 
 # No changes needed for books if they're fine as-is
 class Book(BaseModel):
@@ -26,7 +28,8 @@ class Book(BaseModel):
     author_id: int
 
     class Config:
-        orm_mode = True
+        # orm_mode = True
+        from_attributes = True
 
 class FullBook(BaseModel):
     id: int
@@ -35,4 +38,5 @@ class FullBook(BaseModel):
     author_id: int
 
     class Config:
-        orm_mode = True
+        # orm_mode = True
+        from_attributes = True
