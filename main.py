@@ -34,13 +34,11 @@ load_dotenv('.env')
 
 app = FastAPI()
 
-DATABASE_URL = os.getenv('DATABASE_URL')
+DATABASE_URL = os.getenv('DATABASE_URL', '')
 
 # Add the DBSessionMiddleware with your production database URL
 # And avoid csrftokenError
 app.add_middleware(DBSessionMiddleware, db_url=DATABASE_URL)
-
-run_all_migrations()
 
 # Dependency to get the database session
 def get_db():
@@ -50,6 +48,11 @@ def get_db():
     finally:
         db.close()
 
+@app.on_event("startup")
+async def startup_event():
+    print("Running migrations...")
+    run_all_migrations()
+    
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
@@ -110,4 +113,5 @@ async def get_author_by_id(id: int, db: Session = Depends(get_db)):
 
 # To run locally
 if __name__ == '__main__':
+    print("Starting server...")
     uvicorn.run(app, host='0.0.0.0', port=8000)
