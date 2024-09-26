@@ -3,7 +3,7 @@ annotated-types==0.6.0
 anyio==4.2.0
 click==8.1.7
 colorama==0.4.6
-fastapi==0.109.0
+fastapi==0.115.0
 FastAPI-SQLAlchemy==0.2.1
 greenlet==3.0.3
 h11==0.14.0
