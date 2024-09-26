@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 # Schema for input when creating an author (no ID)
 class AuthorCreate(BaseModel):
@@ -9,6 +9,12 @@ class AuthorCreate(BaseModel):
     class Config:
         # orm_mode = True
         from_attributes = True
+
+    @validator('name', 'surname')
+    def name_surname_not_empty(cls, v):
+        if not v:
+            raise ValueError('Name and Surname cannot be empty')
+        return v
 
 # Schema for output after creating an author (with ID)
 class AuthorResponse(BaseModel):
@@ -30,6 +36,12 @@ class Book(BaseModel):
     class Config:
         # orm_mode = True
         from_attributes = True
+
+    @validator('title', 'rating')
+    def name_surname_not_empty(cls, v):
+        if not v:
+            raise ValueError('Title and Rating cannot be empty')
+        return v
 
 class FullBook(BaseModel):
     id: int

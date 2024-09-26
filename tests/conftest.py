@@ -12,7 +12,8 @@ import os
 TEST_DATABASE_URL = "sqlite:///./test.db"
 
 # Remove the file if exists
-
+if os.path.exists("./test.db"):
+    os.remove("./test.db")
 
 # Create the testing engine and session
 engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})

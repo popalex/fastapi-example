@@ -3,7 +3,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError, ResponseValidationError
 from fastapi.responses import JSONResponse, PlainTextResponse
 import uvicorn
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi_sqlalchemy import DBSessionMiddleware, db
 from database import engine, SessionLocal  
 from alembic.config import Config
@@ -81,6 +81,13 @@ async def get_book(db: Session = Depends(get_db)):
     books = db.query(ModelBook).all()
     return books
 
+@app.get('/book/{id}')
+async def get_book_by_id(id: int, db: Session = Depends(get_db)):
+    book = db.query(ModelBook).filter(ModelBook.id == id).first()
+    if book is None:
+        raise HTTPException(status_code=404, detail='Book not found')
+    return book
+
 @app.post('/author/', response_model=AuthorResponse)  # Using AuthorResponse schema for the response
 async def post_author(author: AuthorCreate, db: Session = Depends(get_db)):  # Using AuthorCreate schema for the input (no ID)
     db_author = ModelAuthor(name=author.name, surname=author.surname, age=author.age)
@@ -93,6 +100,13 @@ async def post_author(author: AuthorCreate, db: Session = Depends(get_db)):  # U
 async def get_author(db: Session = Depends(get_db)):
     authors = db.query(ModelAuthor).all()
     return authors
+
+@app.get('/author/{id}')
+async def get_author_by_id(id: int, db: Session = Depends(get_db)):
+    author = db.query(ModelAuthor).filter(ModelAuthor.id == id).first()
+    if author is None:
+        raise HTTPException(status_code=404, detail='Author not found')
+    return author
 
 # To run locally
 if __name__ == '__main__':

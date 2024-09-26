@@ -100,8 +100,16 @@ def test_get_single_book():
 def test_post_book_invalid():
     book_data = {
         "title": "Invalid Book",
-        "rating": "Not a float",  # Invalid rating type
-        "author_id": 999  # Invalid author_id that doesn't exist
+        "rating": "Not a float",
+        "author_id": 999
+    }
+
+    response = client.post("/book/", json=book_data)
+    assert response.status_code == 400 
+
+    book_data = {
+        "rating": 20.2,
+        "author_id": 1
     }
 
     response = client.post("/book/", json=book_data)
