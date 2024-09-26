@@ -62,28 +62,28 @@ async def root():
 
 
 @app.post('/book/', response_model=FullBook)
-async def book(book: SchemaBook):
+async def post_book(book: SchemaBook):
     db_book = ModelBook(title=book.title, rating=book.rating, author_id = book.author_id)
     db.session.add(db_book)
     db.session.commit()
     return db_book
 
 @app.get('/book/')
-async def book():
+async def get_book():
     book = db.session.query(ModelBook).all()
     return book
 
 
   
 @app.post('/author/', response_model=Author)
-async def author(author:SchemaAuthor):
+async def post_author(author:SchemaAuthor):
     db_author = ModelAuthor(name=author.name, surname=author.surname, age=author.age)
     db.session.add(db_author)
     db.session.commit()
     return db_author
 
 @app.get('/author/')
-async def author():
+async def get_author():
     author = db.session.query(ModelAuthor).all()
     return author
 

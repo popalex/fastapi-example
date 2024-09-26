@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.12-slim
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -7,7 +7,7 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install the Python dependencies
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+RUN pip install --upgrade pip && pip install --no-cache-dir --upgrade -r requirements.txt
 
 # Copy the application code to the working directory
 COPY . .
