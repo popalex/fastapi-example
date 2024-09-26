@@ -8,11 +8,7 @@ from fastapi_sqlalchemy import DBSessionMiddleware, db
 from alembic.config import Config
 from alembic import command
 
-from schema import Book as SchemaBook, FullBook
-from schema import Author as SchemaAuthor
-
-from schema import Book
-from schema import Author
+from schema import AuthorCreate, AuthorResponse, Book as SchemaBook, FullBook
 
 from models import Book as ModelBook
 from models import Author as ModelAuthor
@@ -21,9 +17,8 @@ import os
 from dotenv import load_dotenv
 
 def run_all_migrations():
-    # setup environment variable to ignore logging changes from env.py
     os.environ['FROM_MAIN'] = 'true'
-    BASE_DIR= os.path.dirname(os.path.abspath(__file__))
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     run_migrations(os.path.join(BASE_DIR, 'alembic'), os.environ['DATABASE_URL'])
 
 def run_migrations(script_location: str, dsn: str) -> None:
@@ -50,7 +45,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 @app.exception_handler(ResponseValidationError)
-async def response_validation_exception_handler(request: Request, exc: RequestValidationError):
+async def response_validation_exception_handler(request: Request, exc: ResponseValidationError):  # Fixed
     return JSONResponse(
         status_code=400,
         content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
@@ -60,33 +55,30 @@ async def response_validation_exception_handler(request: Request, exc: RequestVa
 async def root():
     return {"message": "hello world"}
 
-
 @app.post('/book/', response_model=FullBook)
 async def post_book(book: SchemaBook):
-    db_book = ModelBook(title=book.title, rating=book.rating, author_id = book.author_id)
+    db_book = ModelBook(title=book.title, rating=book.rating, author_id=book.author_id)
     db.session.add(db_book)
     db.session.commit()
     return db_book
 
 @app.get('/book/')
 async def get_book():
-    book = db.session.query(ModelBook).all()
-    return book
+    books = db.session.query(ModelBook).all()
+    return books
 
-
-  
-@app.post('/author/', response_model=Author)
-async def post_author(author:SchemaAuthor):
+@app.post('/author/', response_model=AuthorResponse)  # Using AuthorResponse schema for the response
+async def post_author(author: AuthorCreate):  # Using AuthorCreate schema for the input (no ID)
     db_author = ModelAuthor(name=author.name, surname=author.surname, age=author.age)
     db.session.add(db_author)
     db.session.commit()
-    return db_author
+    db.session.refresh(db_author)  # Refresh to get the auto-generated ID from the database
+    return db_author  # This will return the author with the ID included
 
 @app.get('/author/')
 async def get_author():
-    author = db.session.query(ModelAuthor).all()
-    return author
-
+    authors = db.session.query(ModelAuthor).all()
+    return authors
 
 # To run locally
 if __name__ == '__main__':
