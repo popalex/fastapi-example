@@ -3,6 +3,7 @@ name: FastAPI CI - build and run tests
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
   pull_request:
     branches: [ "main" ]
 
@@ -17,6 +18,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Build Docker image
+      run: docker build -t fa .
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
