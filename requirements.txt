@@ -3,7 +3,7 @@ fastapi==0.136.0
 FastAPI-SQLAlchemy==0.2.1
 httpx==0.28.1
 psycopg2-binary==2.9.11
-pydantic==2.13.1
+pydantic==2.13.2
 pytest
 python-dotenv==1.2.2
 SQLAlchemy==2.0.49
