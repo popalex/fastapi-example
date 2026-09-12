@@ -15,4 +15,4 @@ COPY . .
 # Expose the port on which the application will run
 EXPOSE 8080
 
-CMD ["uvicorn", "main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]

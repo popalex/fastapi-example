@@ -1,9 +1,9 @@
 import logging
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError, ResponseValidationError
-from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.responses import JSONResponse
 import uvicorn
-from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi import Depends, FastAPI, HTTPException, Path, Request
 from fastapi_sqlalchemy import DBSessionMiddleware, db
 from database import engine, SessionLocal  
 from alembic.config import Config
@@ -24,7 +24,7 @@ def run_all_migrations(DATABASE_URL = os.getenv('DATABASE_URL', '')) -> None:
     run_migrations(os.path.join(BASE_DIR, 'alembic'), DATABASE_URL)
 
 def run_migrations(script_location: str, dsn: str) -> None:
-    logging.warning('Running DB migrations in %r on %r', script_location, dsn)
+    logging.warning('Running DB migrations in %r', script_location)
     alembic_cfg = Config('alembic.ini')
     alembic_cfg.set_main_option('script_location', script_location)
     alembic_cfg.set_main_option('sqlalchemy.url', dsn)
@@ -57,14 +57,14 @@ async def startup_event():
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=400,
-        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
+        content=jsonable_encoder({"detail": exc.errors()}),
     )
 
 @app.exception_handler(ResponseValidationError)
 async def response_validation_exception_handler(request: Request, exc: ResponseValidationError):  # Fixed
     return JSONResponse(
         status_code=400,
-        content=jsonable_encoder({"detail": exc.errors(), "body": exc.body}),
+        content=jsonable_encoder({"detail": exc.errors()}),
     )
 
 @app.get("/")
@@ -85,7 +85,7 @@ async def get_book(db: Session = Depends(get_db)):
     return books
 
 @app.get('/book/{id}')
-async def get_book_by_id(id: int, db: Session = Depends(get_db)):
+async def get_book_by_id(id: int = Path(gt=0), db: Session = Depends(get_db)):
     book = db.query(ModelBook).filter(ModelBook.id == id).first()
     if book is None:
         raise HTTPException(status_code=404, detail='Book not found')
@@ -105,7 +105,7 @@ async def get_author(db: Session = Depends(get_db)):
     return authors
 
 @app.get('/author/{id}')
-async def get_author_by_id(id: int, db: Session = Depends(get_db)):
+async def get_author_by_id(id: int = Path(gt=0), db: Session = Depends(get_db)):
     author = db.query(ModelAuthor).filter(ModelAuthor.id == id).first()
     if author is None:
         raise HTTPException(status_code=404, detail='Author not found')

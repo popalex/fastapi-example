@@ -5,8 +5,6 @@ from sqlalchemy import pool
 
 from alembic import context
 
-import logging
-
 # My code
 import os,sys
 from dotenv import load_dotenv
@@ -22,11 +20,6 @@ config = context.config
 
 #  Making a connection
 config.set_main_option('sqlalchemy.url', os.getenv('DATABASE_URL' ,''))
-
-logging.warning(f".env full path is {ENV_PATH}")
-logging.warning(f"Watch out, the url is {os.getenv('DATABASE_URL' ,'')}")
-
-logging.info('I told you so')  # will not print anything
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
