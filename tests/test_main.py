@@ -106,6 +106,7 @@ def test_post_book_invalid():
 
     response = client.post("/book/", json=book_data)
     assert response.status_code == 400 
+    assert "body" not in response.json()
 
     book_data = {
         "rating": 20.2,
@@ -114,6 +115,7 @@ def test_post_book_invalid():
 
     response = client.post("/book/", json=book_data)
     assert response.status_code == 400  # Expect a validation error
+    assert "body" not in response.json()
 
 # Test for invalid author creation (optional)
 def test_post_author_invalid():
@@ -126,3 +128,14 @@ def test_post_author_invalid():
 
     response = client.post("/author/", json=author_data)
     assert response.status_code == 400  # Expect a validation error
+    assert "body" not in response.json()
+
+def test_get_book_invalid_id():
+    response = client.get("/book/0")
+    assert response.status_code == 400
+    assert "body" not in response.json()
+
+def test_get_author_invalid_id():
+    response = client.get("/author/0")
+    assert response.status_code == 400
+    assert "body" not in response.json()
