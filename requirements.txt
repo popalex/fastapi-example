@@ -2,7 +2,7 @@ alembic==1.18.5
 fastapi==0.139.0
 FastAPI-SQLAlchemy==0.2.1
 httpx==0.28.1
-psycopg2-binary==2.9.12
+psycopg2-binary==2.9.13
 pydantic==2.13.5
 pytest
 python-dotenv==1.2.3
